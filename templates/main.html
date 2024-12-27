@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Data</title>
+    <style>
+        #content {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Akses Data Penjualan</h1>
+    <form id="date-form">
+        <label for="date-input">Masukkan Tanggal:</label>
+        <input type="date" id="date-input" name="date" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="content">
+       
+    </div>
+
+    <script>
+        const form = document.getElementById('date-form');
+        const contentDiv = document.getElementById('content');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const date = document.getElementById('date-input').value;
+            if (!date) {
+                alert('Harap isi tanggal yang valid');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/resource_sales/${date}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `${localStorage.getItem('authToken')}`,
+                        'Content-Type': 'text/html',
+                    }
+                });
+
+                if (response.ok) {
+                    const htmlContent = await response.text();
+                    contentDiv.innerHTML = htmlContent;
+                } else {
+                    contentDiv.innerHTML = `<p style="color: red;">Gagal load data: ${response.statusText}</p>`;
+                }
+            } catch (error) {
+                console.error('Error mengambil data:', error);
+                contentDiv.innerHTML = `<p style="color: red;">Error. Silahkan coba lagi.</p>`;
+            }
+        });
+        contentDiv.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('detail-button')) {
+                const saleId = e.target.getAttribute('data-id');
+
+                try {
+                    const response = await fetch(`/sales-detail/${saleId}/`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `${localStorage.getItem('authToken')}`
+                        }
+                    });
+                    if (response.ok) {
+                        const detailHtml = await response.text();
+                        document.getElementById('content').innerHTML = detailHtml;
+                    } else {
+                        alert(`Gagal fetch detail data: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    alert('Error terjadi. Silahkan coba lagi.');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

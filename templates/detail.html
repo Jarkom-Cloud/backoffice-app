@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Penjualan</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Detail Penjualan</h1>
+    <p><strong>ID Penjualan:</strong> {{ sales.id }}</p>
+    <p><strong>Waktu Penjualan:</strong> {{ sales.sale_date }}</p>
+    <p><strong>Total Harga:</strong> Rp{{ sales.total_price }}</p>
+    <p>Print Struk</p>
+
+    <h2>Daftar Produk</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Produk</th>
+                <th>Jumlah</th>
+                <th>Harga Satuan</th>
+                <th>Harga</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.product_name }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>Rp{{ product.price }}</td>
+                <td>Rp{{ product.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>

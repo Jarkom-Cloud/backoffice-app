@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+
+<body>
+    <h1>Login</h1>
+    <form id="login-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+    <p id="login-message"></p>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+            const messageEl = document.getElementById('login-message');
+
+            if (response.ok) {
+                localStorage.setItem('authToken', result.token);
+                messageEl.textContent = 'Login successful!';
+                messageEl.style.color = 'green';
+                const now = new Date();
+                const gmt7Offset = 7 * 60 * 60 * 1000;
+                const gmt7Date = new Date(now.getTime() + gmt7Offset);
+                const year = gmt7Date.getUTCFullYear();
+                const month = String(gmt7Date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+                const day = String(gmt7Date.getUTCDate()).padStart(2, '0');
+                const formattedDate = `${year}-${month}-${day}`;
+                window.location.href = `/main/`;
+            } else {
+                messageEl.textContent = result.error || 'Login failed.';
+                messageEl.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+
+</html>
